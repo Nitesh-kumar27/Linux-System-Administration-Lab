@@ -1,0 +1,62 @@
+What you should do this weekend
+1. Build a Linux Portfolio
+
+Create a GitHub repository:
+
+Linux-System-Administration-Lab
+
+Document:
+
+User management
+SSH hardening
+Apache/Nginx setup
+DNS configuration
+Firewall (iptables/nftables)
+Log monitoring
+Cron jobs
+LVM
+RAID concepts
+Network troubleshooting
+
+Recruiters love proof of skills.
+
+2. Learn These Commands Thoroughly
+
+Be able to explain and demonstrate:
+
+ip
+ss
+netstat
+ping
+traceroute
+dig
+nslookup
+tcpdump
+journalctl
+systemctl
+grep
+awk
+sed
+find
+chmod
+chown
+crontab
+
+For Linux/Network roles these are asked frequently.
+
+3. Practice Networking
+
+You should be able to answer:
+
+Explain TCP 3-way handshake
+What happens when google.com opens?
+DNS resolution process
+Difference between switch and router
+VLAN
+NAT
+DHCP DORA process
+Subnetting
+Routing table
+ARP
+
+Since you already work with routers and switches, these questions should be easy.

@@ -1,0 +1,22 @@
+# ====================================================================
+# MODERN & SCANNABLE NANO INTERFACE CONFIG
+# ====================================================================
+
+# --- Interface Layout ---
+set linenumbers         # Display line numbers on the left
+set mouse               # Enable mouse clicking, scrolling, and text selection
+set tabsize 4           # Set tabs to a clean 4 spaces
+set softwrap            # Wrap long lines cleanly instead of cutting them off
+# set positionlog         # Remember where the cursor was when reopening files
+set autoindent          # Automatically indent new lines to match the previous one
+
+# --- Beautiful Color Theme ---
+set titlecolor white,blue       # Crisp white title text on a dark blue header bar
+set statuscolor white,blue      # Crisp white status alerts at the bottom
+set numbercolor cyan            # Modern vibrant cyan for line numbers
+set keycolor yellow             # Bright yellow for shortcut key hints (e.g., ^X, ^O)
+set functioncolor white         # Clean white description text for shortcuts
+
+# --- Enable Built-in Syntax Highlighting ---
+# This pulls in the official coloring rules for languages like Bash, Python, JSON, etc.
+include "/usr/share/nano/*.nanorc"

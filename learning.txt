@@ -1,0 +1,56 @@
+Creating and Managing Users
+1. Create new user (basic): 
+	useradd username
+2. Create user (interactive, Debian/Ubuntu)
+	adduser username
+3. set or change password
+	passwd username
+4. Add user to group
+	usermod -aG groupname username {a- append, G- group>}
+5. Delete user
+	userdel username { not remvoe directory}
+6. Delete user and home directory
+	userdel -r username
+
+	https://www.youtube.com/watch?v=dQ6X6UTieEA
+
+	
+Managing Groups
+
+1. Create a new group on the system.
+	groupadd groupname
+2. Delete an existing grooup.
+	groupdel groupaneme
+3. Add a user to an existing group.
+	gpasswd -a username groupename
+4. Remove a user from a group
+	gpasswd -d username groupname
+5. Display all groups a user belongs to.
+	groups username
+6. Show user id , groups ids 
+	id username
+
+Understanding Sudo access.
+
+1.sudo= "superusser do" , run command as root.
+2 Run single command with root privieges
+	sudo command
+3. Start root shell (interactive)
+	sudo -i
+4 Run as different user
+	sudo -u username command
+	
+5 configuration file : /etc/sudoers
+
+Cofniguring sudo permissions
+1. visudo - safe way to edit /etc/sudoers
+2. Allow user sudo
+	username ALL= (ALL:ALL) ALL
+3. Allow without password
+	userame ALL=(ALL) NOPASSWD: ALL
+4. Speific commands only
+	username ALL=/usr/bin/sysemctl restart nginx
+5. Group-based Sudo 
+	%groupname ALL=(ALL:ALL) ALL
+6. Drop-in config files (cleaner)
+	/etc/sudoers.d
