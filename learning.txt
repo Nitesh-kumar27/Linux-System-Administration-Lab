@@ -8,9 +8,10 @@ Creating and Managing Users
 4. Add user to group
 	usermod -aG groupname username {a- append, G- group>}
 5. Delete user
-	userdel username { not remvoe directory}
+	userdel username { not remove directory}
 6. Delete user and home directory
 	userdel -r username
+
 
 	
 Managing Groups
@@ -52,6 +53,7 @@ Cofniguring sudo permissions
 	%groupname ALL=(ALL:ALL) ALL
 6. Drop-in config files (cleaner)
 	/etc/sudoers.d
+
 	
 Practical User Management Scenarios
 1. Onboarding developers
@@ -67,4 +69,35 @@ Practical User Management Scenarios
 6. Audit sudoers
 	check sudo /etc/sudoers.d
 	
-	https://www.youtube.com/watch?v=dQ6X6UTieEA
+https://www.youtube.com/watch?v=dQ6X6UTieEA
+
+Creataing LVM
+
+
+1. Check disks
+	lsblk
+2. Create Physical Volume
+	pvcrete /dev/sda dev/sdb /dev/sdc
+3. Create Volume Group
+	lvcreate lvname /dev/sda /dev/sdb /dev/sdc
+4. Create Logical Volume
+	# Use all remaining free space (extents)
+	lvcreate -l 100%FREE -n lvname vgname
+	or
+	# Use a specific size in Gigabytes
+	lvcreate -L 10G -n lvname vgname   
+5. format lvm 
+	mkfs.xfs /dev/vgname/lvname
+6. Mount lvm
+	mkdir -p /dirname
+	mount /dev/vgname/lvname /dirname
+8. Get UUID for mount point
+    blkid
+7. make mount presist
+	vi /etc/fstab
+	add : 
+	UUID=3585fce7-c337-4482-bda0-86b325a09f44 /projects    xfs  defaults 0 0
+8. verify : 
+	mount -a
+	or 
+	mount | grep direname
