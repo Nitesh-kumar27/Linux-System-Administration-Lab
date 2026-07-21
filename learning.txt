@@ -1,5 +1,5 @@
 Creating and Managing Users
-1. Create new user (basic): 
+1. Create new user (basic):
 	useradd username
 2. Create user (interactive, Debian/Ubuntu)
 	adduser username
@@ -13,7 +13,7 @@ Creating and Managing Users
 	userdel -r username
 
 
-	
+
 Managing Groups
 
 1. Create a new group on the system.
@@ -26,7 +26,7 @@ Managing Groups
 	gpasswd -d username groupname
 5. Display all groups a user belongs to.
 	groups username
-6. Show user id , groups ids 
+6. Show user id , groups ids
 	id username
 
 Understanding Sudo access.
@@ -38,7 +38,7 @@ Understanding Sudo access.
 	sudo -i
 4 Run as different user
 	sudo -u username command
-	
+
 5 configuration file : /etc/sudoers
 
 Cofniguring sudo permissions
@@ -49,26 +49,26 @@ Cofniguring sudo permissions
 	userame ALL=(ALL) NOPASSWD: ALL
 4. Speific commands only
 	username ALL=/usr/bin/sysemctl restart nginx
-5. Group-based Sudo 
+5. Group-based Sudo
 	%groupname ALL=(ALL:ALL) ALL
 6. Drop-in config files (cleaner)
 	/etc/sudoers.d
 
-	
+
 Practical User Management Scenarios
 1. Onboarding developers
 	adduser, add to groups (sudo , docker, developers)
-2. Service account 
+2. Service account
 	useradd -r-s /bin/false (no login,for apps)
 3. Temporary contractor
 	create user , set expiration with change -E
 4. Shared team directory
 	create group, set group ownership , use 2775
-5. Offboading 
+5. Offboading
 	Lock account (usermod -L),backup data , delete
 6. Audit sudoers
 	check sudo /etc/sudoers.d
-	
+
 https://www.youtube.com/watch?v=dQ6X6UTieEA
 
 Creataing LVM
@@ -85,8 +85,8 @@ Creataing LVM
 	lvcreate -l 100%FREE -n lvname vgname
 	or
 	# Use a specific size in Gigabytes
-	lvcreate -L 10G -n lvname vgname   
-5. format lvm 
+	lvcreate -L 10G -n lvname vgname
+5. format lvm
 	mkfs.xfs /dev/vgname/lvname
 6. Mount lvm
 	mkdir -p /dirname
@@ -95,9 +95,143 @@ Creataing LVM
     blkid
 7. make mount presist
 	vi /etc/fstab
-	add : 
+	add :
 	UUID=3585fce7-c337-4482-bda0-86b325a09f44 /projects    xfs  defaults 0 0
-8. verify : 
+8. verify :
 	mount -a
-	or 
+	or
 	mount | grep direname
+
+
+Creataing LocalRepo to RHEL 10
+1. Mount
+	mount -o loop /root/rhel-10.iso /rhel
+2. Create a new repo file
+	vi /etc/yum.repos.d/local.repo
+	[BaseOS]
+	name=RHEL10 BaseOS
+	baseurl=file:///rhel/BaseOS
+	enabled=1
+	gpgcheck=0
+
+	[AppStream]
+	name=RHEL10 AppStream
+	baseurl=file:///rhel/AppStream
+	enabled=1
+	gpgcheck=0
+
+3.	dnf clean all
+	dnf makecache
+
+4	dnf repolist
+5. 	echo "/dev/sde /rhel iso9660 defaults 0 0" >> /etc/fstab
+
+
+RHCSA Firewalld
+
+1. Show active config:
+	firewall-cmd --list-all
+2. Allow HTTP:
+	firewall-cmd --add-service=http --permanent
+3. Allow HTTPS:
+	firewall-cmd --add-service=https --permanent
+4. Open custom port:
+	firewall-cmd --add-port=8080/tcp --permanent
+5. Reload:
+	firewall-cmd --reload
+
+
+SELinux
+
+1. Check SELinux mode
+	getenforce
+	or
+	sestatus
+	Results : Enforcing | Permissive | Disabled
+2. Show lebels
+	ls -Z  {view lables}
+	ls -Zd /path {view direcotry lables}
+3. Restore default labels
+	restorecon
+4. syntex : system_u:system_r:httpd_t:s0
+5. Temporary / direct label change
+	chcon
+6. Persistent SELinux policy mapping
+	semanage fcontext
+	restorecon
+7. Change seliux policy
+	chcon -t httpd_sys_content_t /web/index.html  {Temporary}
+8. restorecon
+	restorecon -Rv /web
+9. semanage {make paramanet changes}
+	semanage fcontext -a -t httpd_sys_content_t "/web(/.*)?"
+10. verfiy : restorecon -Rv /web
+
+11. SELinux Boolean (SELinux feature switches.)
+	view all booleans
+		getsebool -a
+	enable permanent on (-P)
+		setsebool -P httpd_can_network_connect on
+
+
+Network Manger (nmcli)
+
+1. show interfaces
+	ip addr
+	or
+	nmcli device status
+2. Connection  profiles
+	nmcli connection show
+3. View IP Configuration
+	ip addr shwo ens3
+	or
+	nmcli device show ens3
+4. Change hostname
+	hostname
+	hostnamectl set-hostname name
+	hostnamectl
+5.	Configure Static IP
+	nmcli connection show (to get interface name)
+	-> nmcli connection modify ens3 \
+		ipv4.addresses 192.168.100.200/24 \
+		ipv4.gateway 192.168.100.1 \
+		ipv4.dns 8.8.8.8 \
+		ipv4.method manual
+
+		nmcli connection down ens3
+		nmcli connection up ens3
+		or
+		nmcli connection reload
+
+6. Create new connection profiles
+	nmcli connection add \
+	type ethernet \
+	ifname ens160 \
+	con-name static-lab \
+	ipv4.addresses 192.168.100.50/24 \
+	ipv4.gateway 192.168.100.1 \
+	ipv4.dns "8.8.8.8" \
+	ipv4.method manual
+
+
+ACL (Access Control List) for permission on linux +
+1.  Give Bob Read Access Using ACL
+    setfacl -m u:bob:r /secret.txt
+        setfacl - set an ACL
+        -m      - Modify an ACL
+        u:bob:r - User Bob gets Read permission
+2.  Verify
+    getfacl /secret.txt
+3. Mask
+    setfacl -m m:r-- /secret.txt  { max permission on file by acl}
+4. Remove a acl
+    setfacl -x u:bob /secret.txt
+5. Remove all ACls
+    setfacl -b file
+6. Default ACL
+    setfacl -d -m g:developers:rwx /project
+        -d    This is the important part.
+        It means:
+        Default ACL
+        Not for the directory itself.
+        For future files and directories created inside it.

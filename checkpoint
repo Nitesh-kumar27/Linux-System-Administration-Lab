@@ -1,0 +1,369 @@
+# RHCSA Preparation Checkpoint
+
+## Environment
+
+* Host OS: Parrot OS
+* Virtualization: KVM
+* Guest: RHEL 10 VM
+* Practice style: Hands-on RHCSA labs
+* Goal: RHCSA (EX200)
+* Experience: Beginner with some RHEL exposure from ISTRAC Data Center
+* Study time: ~2 hours/day
+
+---
+
+## Topics Completed
+
+### 1. User and Group Management
+
+Commands practiced:
+
+* useradd
+* passwd
+* usermod -aG
+* groupadd
+* groupdel
+* gpasswd
+* id
+* groups
+* userdel -r
+
+Concepts learned:
+
+* Primary vs supplementary groups
+* Service accounts
+* Temporary users
+* User expiration
+* Account locking
+* Sudo basics
+
+---
+
+### 2. Permissions
+
+Learned:
+
+* rwx
+* Numeric permissions
+* chmod
+* chown
+* chgrp
+
+Special permissions:
+
+* SUID
+* SGID
+* Sticky Bit
+
+Examples practiced:
+
+* Shared directory with SGID
+* Sticky bit behavior
+* Ownership and deletion rules
+
+Important understanding:
+
+* File deletion depends on directory permissions, not file permissions.
+
+---
+
+### 3. LVM
+
+Created:
+
+* 3 disks
+* PVs
+* VG: vgdev
+
+Logical Volumes:
+
+* lvprojects
+* lvarchive
+
+Commands practiced:
+
+* pvcreate
+* vgcreate
+* lvcreate
+* mkfs.xfs
+* mount
+* df -h
+* pvs
+* vgs
+* lvs
+* lvdisplay -m
+
+Extended LV:
+
+* lvextend -L +2G -r /dev/vgdev/lvprojects
+
+Important understanding:
+
+* LVM allocates extents from PVs.
+* VG free space can remain unused.
+* XFS can grow online.
+* LVM does not consume the entire disk immediately.
+
+---
+
+### 4. Filesystems and Mounts
+
+Practiced:
+
+* mkfs.xfs
+* mount
+* umount
+* /etc/fstab
+
+Fixed:
+
+* fstab parse error
+
+Learned:
+
+* Correct fstab field order
+* mount -a testing
+* Persistent mounts
+
+---
+
+### 5. HTTPD (Apache)
+
+Commands practiced:
+
+* systemctl start httpd
+* systemctl stop httpd
+* systemctl enable httpd
+* systemctl restart httpd
+* systemctl status httpd
+
+Verification:
+
+* curl localhost
+* ss -tulpn
+
+Troubleshooting:
+
+* Invalid httpd.conf
+* httpd -t
+* journalctl -xeu httpd
+
+Error encountered:
+
+* AH00534: No MPM loaded
+
+Fix:
+
+* Restore original configuration
+
+Important understanding:
+
+* Always run httpd -t before restart.
+
+---
+
+### 6. Firewalld
+
+Commands practiced:
+
+* firewall-cmd --list-all
+* firewall-cmd --add-service=http --permanent
+* firewall-cmd --reload
+
+Learned:
+
+* Difference between runtime and permanent rules.
+* Why ping may work while HTTP fails.
+
+Troubleshooting flow:
+
+1. Service
+2. Port
+3. Firewall
+4. SELinux
+
+---
+
+### 7. SELinux
+
+Current mode:
+
+* Enforcing
+
+Commands learned:
+
+* getenforce
+* sestatus
+* ls -Z
+* ls -Zd
+* chcon
+* restorecon
+* semanage fcontext
+* getsebool
+* setsebool
+
+---
+
+#### SELinux Context Understanding
+
+Context format:
+
+user:role:type:level
+
+Examples:
+
+Apache process:
+
+system_u:system_r:httpd_t:s0
+
+Web content:
+
+unconfined_u:object_r:httpd_sys_content_t:s0
+
+Important concept:
+
+Only the TYPE is usually important.
+
+Process:
+
+httpd_t
+
+Allowed content:
+
+httpd_sys_content_t
+
+Denied content:
+
+default_t
+
+---
+
+#### SELinux Lab
+
+Changed:
+
+DocumentRoot "/web"
+
+Observed:
+
+/web -> default_t
+
+Result:
+
+403 Forbidden
+
+Temporary fix:
+
+chcon -t httpd_sys_content_t /web
+chcon -t httpd_sys_content_t /web/index.html
+
+Result:
+
+curl localhost
+
+Output:
+
+SELINUX TEST
+
+---
+
+#### Persistent Fix
+
+Learned:
+
+chcon = temporary
+
+semanage fcontext = persistent
+
+Command:
+
+semanage fcontext -a -t httpd_sys_content_t "/web(/.*)?"
+
+Apply:
+
+restorecon -Rv /web
+
+Important regex understanding:
+
+/web(/.*)?
+
+Matches:
+
+* /web
+* /web/index.html
+* /web/images
+* /web/images/logo.png
+
+But:
+
+/web/.*
+
+Does NOT match:
+
+* /web
+
+Only contents beneath it.
+
+---
+
+### 8. SELinux Booleans
+
+Commands:
+
+* getsebool -a
+* getsebool -a | grep httpd
+* setsebool
+* setsebool -P
+
+Important booleans:
+
+* httpd_can_network_connect
+* httpd_enable_homedirs
+* httpd_read_user_content
+
+Important understanding:
+
+Contexts control file access.
+
+Booleans control SELinux features/capabilities.
+
+---
+
+## Current RHCSA Skill Assessment
+
+Strong:
+
+* Users and Groups
+* Permissions
+* SUID/SGID/Sticky Bit
+* LVM
+* Filesystems
+* fstab
+* HTTPD
+* Firewalld
+* SELinux Contexts
+* SELinux Booleans
+
+Need More Practice:
+
+* NetworkManager (nmcli)
+* Storage troubleshooting
+* Containers (Podman)
+* Scheduled tasks
+* ACLs
+* Stratis/VDO (if required by exam version)
+
+---
+
+## Next Topic To Learn
+
+NetworkManager (nmcli)
+
+Planned topics:
+
+1. nmcli
+2. ACLs
+3. Cron/Systemd Timers
+4. Podman
+5. RHCSA Troubleshooting Labs
+6. Full Mock Exam
