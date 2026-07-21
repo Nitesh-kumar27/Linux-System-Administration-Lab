@@ -235,3 +235,6 @@ ACL (Access Control List) for permission on linux +
         Default ACL
         Not for the directory itself.
         For future files and directories created inside it.
+
+        
+        new line
