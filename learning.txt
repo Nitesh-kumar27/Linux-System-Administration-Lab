@@ -51,7 +51,7 @@ Understanding Sudo access.
 
 Cofniguring sudo permissions
 1. visudo - safe way to edit /etc/sudoers
-2. A   
+2. A
 
 
 Practical User Management Scenarios
@@ -236,7 +236,7 @@ ACL (Access Control List) for permission on linux +
         For future files and directories created inside it.
 7. Acl mask
 		setfacl -m m:r-- /secret.txt  { m mask is maximum allowed}
-		
+
 
 Job Scheduling (Cron/At)
 Cron	At
@@ -247,9 +247,9 @@ Stored in crontab	Stored in at queue
 Each user has their own crontab (cron table).
 View
 	crontab -l
-Edit 
+Edit
 	crontab -e
-Remove 
+Remove
 	crontab -r
 
 Cron Syntex :
@@ -266,7 +266,7 @@ Cron Syntex :
 2. Lists (,)
 	0 9,13,17 * * * run at 9:00 am , 1:00 pm ,5:00 pm
 3. Ranges (-)
-	0 9-17 * * *	run every hour from 9 am to 5 pm 
+	0 9-17 * * *	run every hour from 9 am to 5 pm
 
 AT
 	systemctl status atd
@@ -274,7 +274,7 @@ AT
 		at now + 2 minutes
 		> write task
 		ctrl+ D
-	view jobs 
+	view jobs
 		atq
 	remove jobs
 		atrm job_id
@@ -286,4 +286,67 @@ AT
 		| `atq`                | List pending jobs                 |
 		| `at -c <jobid>`      | View the commands stored in a job |
 		| `atrm <jobid>`       | Remove a scheduled job            |
-		
+
+Podman (Containers)
+    A container is: A lightweight isolated environment that shares the host operating system's kernel.
+    * all containers share the same kernel.
+    podman --version
+    podman info
+    podman terminology
+        Image : Read only templates
+        Container : Running (or stopped) instance of image
+        Registry: Repository that stores images
+
+    Download Red Hat Universal Base Image (UBI 9)
+    1.  podman pull registry.access.redhat.com/ubi9/ubi
+    2.  podman images
+    3. podman run --name myubi -it registry.access.redhat.com/ubi9/ubi
+        run : create and start a container
+        --name myubi : assing the name myubi
+        -i  : keep STDIN opne (interactive)
+        -t  : allocate a terminal (TTY)
+        Image to create the container from
+    4. Verify
+        cat /etc/os-release
+        podman ps
+        podman ps -a
+    5. Start the exiting container
+        podman start myubi
+        podman stop myubi
+    6. Start and attach to the container
+        podman start -ai myubi
+            -a = Attach to the container's terminal.
+            -i = Keep standard input open.
+    7.  Inspect the container:
+        podman inspect myubi
+    8. Remove container
+        podman rm myubi
+    9. remove image
+        podman rmi registry.access.redhat.com/ubi9/ubi
+
+    Run a Container in the Background
+    1. Create a detached container:
+        podman run -d --name web registry.access.redhat.com/ubi9/ubi sleep infinity
+            -d	Detached (background) mode
+            --name web	Name the container web
+            sleep infinity	Keep the container running indefinitely
+    2. Enter a Running Container
+        podman exec -it web /bin/bash
+
+    | `podman start -ai`                            | `podman exec -it`                                     |
+| --------------------------------------------- | ----------------------------------------------------- |
+| Starts a stopped container and attaches to it | Opens a new shell inside an already running container |
+| Used when the container is stopped            | Used when the container is already running            |
+
+Podman Part 2 - Port mapping ( -p)
+    Imagine you're running Apache inside a container.
+        Host Port = 8080
+        Container Port = 80
+    start
+        podman run -d \
+        --name testweb \
+        -p 8080:80 \
+        registry.access.redhat.com/ubi9/ubi \
+        sleep infinity
+    check :
+        podman port testweb
