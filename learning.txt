@@ -267,3 +267,23 @@ Cron Syntex :
 	0 9,13,17 * * * run at 9:00 am , 1:00 pm ,5:00 pm
 3. Ranges (-)
 	0 9-17 * * *	run every hour from 9 am to 5 pm 
+
+AT
+	systemctl status atd
+	add job
+		at now + 2 minutes
+		> write task
+		ctrl+ D
+	view jobs 
+		atq
+	remove jobs
+		atrm job_id
+
+		| Command              | Purpose                           |
+		| -------------------- | --------------------------------- |
+		| `at now + 5 minutes` | Schedule a one-time job           |
+		| `at 11:00 PM`        | Schedule a job at a specific time |
+		| `atq`                | List pending jobs                 |
+		| `at -c <jobid>`      | View the commands stored in a job |
+		| `atrm <jobid>`       | Remove a scheduled job            |
+		

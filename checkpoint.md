@@ -946,3 +946,87 @@ Continue exactly like previous sessions:
 * Focus on understanding, not memorization.
 * Use real RHCSA scenarios and troubleshooting examples.
 * Keep explanations practical and exam-oriented.
+
+
+---
+
+## Progress Update (Current Session)
+
+### Newly Completed
+
+#### 10. Cron (Recurring Job Scheduling)
+
+Commands practiced:
+
+* systemctl status/start/enable crond
+* crontab -e
+* crontab -l
+
+Concepts learned:
+
+* crond service
+* Five cron fields (Minute Hour Day Month Weekday)
+* Special characters: *, ,, -, */
+* Multiple jobs can execute at the same time.
+* > vs >> redirection
+* Reading cron expressions left-to-right
+* Practical recurring jobs
+
+Labs completed:
+
+* Created a cron job writing timestamps to /tmp/cron_test.log every minute.
+* Created jobs running every 2 minutes and at the top of every hour.
+* Verified execution by checking log files.
+
+#### 11. at (One-Time Job Scheduling)
+
+Commands practiced:
+
+* systemctl status/start/enable atd
+* at now + 2 minutes
+* atq
+* at -c
+* atrm
+
+Concepts learned:
+
+* Difference between cron and at
+* at schedules one-time jobs only.
+* Jobs remain in queue until executed.
+* Executed jobs are removed automatically.
+* atrm removes pending jobs.
+* at -c displays the stored job.
+
+Labs completed:
+
+* Verified atd service.
+* Scheduled one-time jobs.
+* Listed queued jobs with atq.
+* Learned to inspect and remove jobs.
+
+---
+
+## Overall Progress
+
+Estimated completion: **75–80%**
+
+Completed:
+- User & Group Management
+- Linux Permissions (SUID/SGID/Sticky Bit)
+- ACLs
+- LVM
+- Filesystems & /etc/fstab
+- HTTPD
+- Firewalld
+- SELinux
+- NetworkManager (nmcli)
+- Cron
+- at
+
+Remaining:
+1. Podman (major topic)
+2. Boot process & GRUB rescue (awareness)
+3. Storage review
+4. Networking review
+5. Comprehensive troubleshooting
+6. Full RHCSA mock exams
