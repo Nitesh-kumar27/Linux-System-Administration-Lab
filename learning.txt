@@ -1,5 +1,5 @@
 Creating and Managing Users
-1. Create new user (basic):
+1. Create new user (basic): (-m flat to create home direcotry)
 	useradd username
 2. Create user (interactive, Debian/Ubuntu)
 	adduser username
@@ -12,8 +12,16 @@ Creating and Managing Users
 6. Delete user and home directory
 	userdel -r username
 
-
-
+	Lock account:
+		passwd -l alice
+	Unlock account:
+		passwd -u alice
+	Expire password:
+		chage -d 0 alice
+	Show aging:
+		chage -l alice
+	Expire account
+		chage -E 2026-07-31 alice
 Managing Groups
 
 1. Create a new group on the system.
@@ -43,16 +51,7 @@ Understanding Sudo access.
 
 Cofniguring sudo permissions
 1. visudo - safe way to edit /etc/sudoers
-2. Allow user sudo
-	username ALL= (ALL:ALL) ALL
-3. Allow without password
-	userame ALL=(ALL) NOPASSWD: ALL
-4. Speific commands only
-	username ALL=/usr/bin/sysemctl restart nginx
-5. Group-based Sudo
-	%groupname ALL=(ALL:ALL) ALL
-6. Drop-in config files (cleaner)
-	/etc/sudoers.d
+2. A   
 
 
 Practical User Management Scenarios
@@ -235,6 +234,36 @@ ACL (Access Control List) for permission on linux +
         Default ACL
         Not for the directory itself.
         For future files and directories created inside it.
+7. Acl mask
+		setfacl -m m:r-- /secret.txt  { m mask is maximum allowed}
+		
 
-        
-        new line
+Job Scheduling (Cron/At)
+Cron	At
+Repeating jobs	One-time job
+Every minute/day/week/month	Runs once
+Stored in crontab	Stored in at queue
+
+Each user has their own crontab (cron table).
+View
+	crontab -l
+Edit 
+	crontab -e
+Remove 
+	crontab -r
+
+Cron Syntex :
+* * * * * command_to_run
+│ │ │ │ │
+│ │ │ │ └── Day of Week (0–7)
+│ │ │ └──── Month (1–12)
+│ │ └────── Day of Month (1–31)
+│ └──────── Hour (0–23)
+└────────── Minute (0–59)
+* means every possible value
+1. Step Values (*/)
+	*/5 * * * * Every 5 minutes
+2. Lists (,)
+	0 9,13,17 * * * run at 9:00 am , 1:00 pm ,5:00 pm
+3. Ranges (-)
+	0 9-17 * * *	run every hour from 9 am to 5 pm 

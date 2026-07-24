@@ -367,3 +367,582 @@ Planned topics:
 4. Podman
 5. RHCSA Troubleshooting Labs
 6. Full Mock Exam
+
+
+
+
+# RHCSA (EX200) Preparation Checkpoint
+
+## Student Profile
+
+* Goal: RHCSA (EX200)
+* Current Level: Beginner with some real-world RHEL exposure from ISTRAC Data Center
+* Study Style: Hands-on labs only
+* Study Time: ~2 hours/day
+* Preferred Method:
+
+* Learn concepts first
+* Then perform hands-on labs
+* Explain *why* things work
+* RHCSA exam-focused approach
+* One topic at a time with examiner-style questions
+
+---
+
+# Lab Environment
+
+Host OS:
+
+* Parrot Security OS
+
+Virtualization:
+
+* KVM
+
+Guest OS:
+
+* RHEL 10
+
+Access:
+
+* Terminal
+* KVM graphical console when required
+
+---
+
+# Topics Completed
+
+## 1. User and Group Management
+
+Commands Practiced
+
+* useradd
+* userdel -r
+* usermod
+* passwd
+* groupadd
+* groupdel
+* gpasswd
+* id
+* groups
+
+Concepts Learned
+
+* Primary group
+* Supplementary groups
+* User lifecycle
+* Account locking
+* Password management
+* Service accounts
+* Temporary users
+* Basic sudo concepts
+
+Status:
+✅ Completed
+
+---
+
+## 2. Linux Permissions
+
+Commands
+
+* chmod
+* chown
+* chgrp
+
+Concepts
+
+* rwx permissions
+* Numeric permissions
+* Symbolic permissions
+* Ownership
+
+Special Permissions
+
+* SUID
+* SGID
+* Sticky Bit
+
+Important Understanding
+
+* File deletion depends on the parent directory permissions.
+* Read/Write permissions on a file do not automatically allow deletion.
+
+Status:
+✅ Completed
+
+---
+
+## 3. LVM
+
+Labs Completed
+
+Created
+
+* Physical Volumes
+* Volume Group (vgdev)
+* Logical Volumes
+
+* lvprojects
+* lvarchive
+
+Commands
+
+* pvcreate
+* vgcreate
+* lvcreate
+* mkfs.xfs
+* mount
+* umount
+* df -h
+* pvs
+* vgs
+* lvs
+* lvdisplay -m
+* lvextend -L +SIZE -r
+
+Concepts
+
+* PV
+* VG
+* LV
+* Physical Extents
+* Logical Extents
+* Online XFS growth
+* VG free space
+
+Status:
+✅ Completed
+
+---
+
+## 4. Filesystems & Persistent Mounts
+
+Commands
+
+* mkfs.xfs
+* mount
+* umount
+* mount -a
+
+Configuration
+
+* /etc/fstab
+
+Concepts
+
+* Persistent mounts
+* fstab field order
+* mount -a testing
+* Parse error troubleshooting
+
+Status:
+✅ Completed
+
+---
+
+## 5. HTTPD (Apache)
+
+Commands
+
+* systemctl start
+* stop
+* restart
+* enable
+* status
+
+Verification
+
+* curl localhost
+* ss -tulpn
+
+Troubleshooting
+
+* httpd -t
+* journalctl -xeu httpd
+
+Lab Performed
+
+* Broke httpd.conf intentionally
+* Received:
+
+* AH00534: No MPM loaded
+* Restored configuration
+
+Important Habit
+
+Always run:
+
+```bash
+httpd -t
+```
+
+before restarting Apache.
+
+Status:
+✅ Completed
+
+---
+
+## 6. Firewalld
+
+Commands
+
+* firewall-cmd --list-all
+* firewall-cmd --add-service=http --permanent
+* firewall-cmd --reload
+
+Concepts
+
+* Runtime vs Permanent rules
+* Service troubleshooting order
+
+Troubleshooting Flow
+
+1. Service
+2. Port
+3. Firewall
+4. SELinux
+
+Status:
+✅ Completed
+
+---
+
+## 7. SELinux
+
+Mode
+
+* Enforcing
+
+Commands
+
+* getenforce
+* sestatus
+* ls -Z
+* ls -Zd
+* chcon
+* restorecon
+* semanage fcontext
+* getsebool
+* setsebool
+
+Context Understanding
+
+Format
+
+```
+user:role:type:level
+```
+
+Most Important Field
+
+* Type
+
+Examples
+
+Process
+
+```
+httpd_t
+```
+
+Content
+
+```
+httpd_sys_content_t
+```
+
+Wrong Type
+
+```
+default_t
+```
+
+Lab Completed
+
+* Changed Apache DocumentRoot to:
+
+```
+/web
+```
+
+Observed
+
+```
+default_t
+```
+
+Result
+
+```
+403 Forbidden
+```
+
+Temporary Fix
+
+```
+chcon
+```
+
+Permanent Fix
+
+```
+semanage fcontext
+restorecon
+```
+
+Regex Learned
+
+```
+/web(/.*)?
+```
+
+Difference from
+
+```
+/web/.*
+```
+
+SELinux Booleans Learned
+
+* httpd_can_network_connect
+* httpd_enable_homedirs
+* httpd_read_user_content
+
+Concept Learned
+
+Contexts decide **what** a process may access.
+
+Booleans decide **what features/capabilities** are allowed.
+
+Status:
+✅ Completed
+
+---
+
+## 8. NetworkManager (nmcli)
+
+Commands Learned
+
+* nmcli device status
+* nmcli connection show
+* nmcli device show
+* nmcli connection modify
+* nmcli connection up
+* nmcli connection down
+* hostnamectl set-hostname
+* ip addr
+* ip route
+
+Concepts
+
+Device
+
+Example
+
+```
+ens3
+```
+
+Connection Profile
+
+Example
+
+```
+ens3
+```
+
+Important Understanding
+
+Device ≠ Connection Profile
+
+Labs Completed
+
+* Static IP
+* DHCP
+* DNS
+* Gateway
+* Hostname
+* Bring interface up/down
+
+Troubleshooting Learned
+
+* Changing a profile does not immediately change the active configuration.
+* `nmcli con up` applies the profile.
+* While switching back to DHCP, the interface temporarily had both:
+
+* Static IP
+* DHCP IP
+* Learned how to remove:
+
+* ipv4.addresses
+* ipv4.gateway
+* ipv4.dns
+
+Status:
+✅ Completed
+
+---
+
+## 9. ACL (Access Control Lists)
+
+Commands Learned
+
+View ACL
+
+```
+getfacl
+```
+
+Add ACL
+
+```
+setfacl -m
+```
+
+Remove One ACL
+
+```
+setfacl -x
+```
+
+Remove All ACLs
+
+```
+setfacl -b
+```
+
+Default ACL
+
+```
+setfacl -d -m
+```
+
+Concepts Learned
+
+Why ACLs exist
+
+Normal permissions only provide:
+
+* Owner
+* Group
+* Others
+
+ACL allows permissions for specific users/groups without changing ownership.
+
+Important Understanding
+
+The "+" in:
+
+```
+-rw-r-----+
+```
+
+means:
+
+Extended ACL entries exist.
+
+Mask Concept
+
+Understood that:
+
+* Mask limits effective permissions.
+* `setfacl` usually recalculates the mask automatically.
+* Effective permissions may be lower than requested permissions because of the mask.
+
+Default ACL
+
+Successfully understood that:
+
+```
+setfacl -d -m
+```
+
+creates a template on a directory.
+
+New files inherit the ACL automatically.
+
+Existing files do not.
+
+Directory inheritance concept fully understood.
+
+Relationship Between ACL and Deletion
+
+Understood that:
+
+ACL controls access to the file.
+
+Deletion depends on:
+
+Parent directory write + execute permissions.
+
+Status:
+✅ Completed
+
+---
+
+# Current RHCSA Progress
+
+Strong Areas
+
+* User Management
+* Groups
+* Linux Permissions
+* Special Permissions
+* LVM
+* Filesystems
+* fstab
+* Apache
+* Firewalld
+* SELinux
+* NetworkManager
+* ACLs
+
+Confidence
+
+Approximately 65–70% of RHCSA objectives completed.
+
+---
+
+# Next Topic (Start Here)
+
+## Topic 10 — Job Scheduling
+
+Start from the beginning with:
+
+### Cron
+
+Teach in this order:
+
+1. Why Cron exists
+2. Cron vs At
+3. crond service
+4. Cron syntax (five fields)
+5. crontab -e
+6. crontab -l
+7. Hands-on labs
+8. RHCSA troubleshooting
+9. Common exam questions
+
+After Cron, continue with:
+
+1. At (one-time jobs)
+2. systemd timers (RHCSA awareness)
+3. Podman Containers
+4. RHCSA Troubleshooting Labs
+5. Full RHCSA Mock Exams
+
+---
+
+# Teaching Style to Continue
+
+Continue exactly like previous sessions:
+
+* Explain concepts before commands.
+* One small lab at a time.
+* Wait for lab completion before moving forward.
+* Frequently ask examiner-style questions.
+* Focus on understanding, not memorization.
+* Use real RHCSA scenarios and troubleshooting examples.
+* Keep explanations practical and exam-oriented.
