@@ -288,11 +288,10 @@ AT
 		| `atrm <jobid>`       | Remove a scheduled job            |
 
 Podman (Containers)
-    A container is: A lightweight isolated environment that shares the host operating system's kernel.
-    * all containers share the same kernel.
+    A container is: A lightweight isolated environment that shares the host operating system's kernel. * all containers share the same kernel.
     podman --version
     podman info
-    podman terminology
+        podman terminology
         Image : Read only templates
         Container : Running (or stopped) instance of image
         Registry: Repository that stores images
@@ -333,10 +332,9 @@ Podman (Containers)
     2. Enter a Running Container
         podman exec -it web /bin/bash
 
-    | `podman start -ai`                            | `podman exec -it`                                     |
-| --------------------------------------------- | ----------------------------------------------------- |
-| Starts a stopped container and attaches to it | Opens a new shell inside an already running container |
-| Used when the container is stopped            | Used when the container is already running            |
+        `podman start -ai`                              | `podman exec -it`
+        | Starts a stopped container and attaches to it | Opens a new shell inside an already running container |
+        | Used when the container is stopped            | Used when the container is already running            |
 
 Podman Part 2 - Port mapping ( -p)
     Imagine you're running Apache inside a container.
@@ -350,3 +348,58 @@ Podman Part 2 - Port mapping ( -p)
         sleep infinity
     check :
         podman port testweb
+            Podman publishes the container's port 8000 on the host's port 8080. Any request sent to the host on port 8080 is forwarded by Podman to port 8000 inside the container.
+            Podman does not create the service; it only forwards traffic to the service.
+
+Podman Volumnes (-v):
+    Mounting a volume
+    1.-v /srv/webdata:/data \ { -v: mount a host directory into the container}
+        /srv/webdata : host part and /data inside the container
+    2.Memory Rule
+        Host : Container
+    3. { -v /srv/webdata:/data:Z \} :z or :Z   It tells Podman: "Change the SELinux label on /srv/webdata so this container is allowed to use it."
+    4.  :Z	Private SELinux label	One container uses the directory
+        :z	Shared SELinux label	Multiple containers share the directory
+
+Podman Systemd
+    Podman does not automatically restart containers after a reboot.
+    When Linux starts again, only systemd services start automatically.
+    The container is not yet a systemd service.
+    Solution Convert the container into a systemd service.
+
+    1.podman generate systemd --name webserver { this will print systemd service detail}
+    2. to save it :
+        podman generate systemd --name volume-test > /etc/systemd/system/volume-test.service
+    3. systemctl daemon-reload
+    4. systemctl enable & start that created service
+
+
+Boot Process & GRUB
+    Power Button (The motherboard firmware takes control.) : BIOS / UEFI (POST) : Boot Device : GRUB2 : Linux Kernel : initramfs : systemd (PID 1) : Services Start : Login Screen
+
+    Q1. What is the job of BIOS/UEFI?
+    BIOS or UEFI is the firmware that starts when the computer is powered on. It performs the Power-On Self-Test (POST) to check hardware like the CPU, RAM, keyboard, and storage devices. After verifying the hardware, it finds the bootable device and transfers control to the bootloader (GRUB).
+
+    Q2. What is POST?
+    POST stands for Power-On Self-Test. It is the first hardware check performed by BIOS/UEFI when the computer starts. It verifies that important hardware components such as RAM, CPU, keyboard, and storage devices are working properly before the operating system begins to load.
+
+    Q3. What is GRUB2?
+    GRUB2 (GRand Unified Bootloader) is the Linux bootloader. It displays the boot menu if multiple operating systems are installed and allows the user to choose which operating system to start. After an operating system is selected, GRUB loads the Linux kernel into memory.
+
+    Q4. Who loads the Linux kernel?
+    The Linux kernel is loaded by GRUB2. After BIOS/UEFI finishes its work and selects the boot device, GRUB2 loads the selected Linux kernel into memory and passes control to it so the operating system can continue booting.
+
+    Q5. What is the Linux kernel?
+    The Linux kernel is the core (heart) of the operating system. It manages hardware resources such as the CPU, memory, storage devices, network devices, and processes. It also handles system calls and acts as a bridge between hardware and user applications.
+
+    Q6. What is initramfs?
+    initramfs (Initial RAM Filesystem) is a temporary filesystem loaded into memory by the kernel during boot. It contains the drivers and modules needed to detect storage devices, load filesystems, and mount the real root filesystem (/). Once the real root filesystem is mounted, initramfs has completed its job.
+
+    Q7. What is PID 1?
+    systemd is the first userspace process started by the Linux kernel, and it always runs with Process ID (PID) 1. It is responsible for starting, stopping, and managing all system services and processes during system startup.
+
+    Q8. Why do we use systemctl?
+    systemctl is the command-line tool used to communicate with systemd. It is used to start, stop, restart, enable, disable, and check the status of services. It helps administrators manage services running on the Linux system.
+
+    RHCSA Boot Process (One Paragraph)
+    When the computer is powered on, BIOS/UEFI performs POST to check the hardware. It then finds the bootable device and loads GRUB2. GRUB2 displays the boot menu and loads the Linux kernel into memory. The kernel loads initramfs, which contains the drivers needed to find and mount the real root filesystem. After the root filesystem is mounted, the kernel starts systemd (PID 1). Finally, systemd starts all enabled services, and the system displays the login prompt.
