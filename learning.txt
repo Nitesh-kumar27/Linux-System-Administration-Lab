@@ -403,3 +403,65 @@ Boot Process & GRUB
 
     RHCSA Boot Process (One Paragraph)
     When the computer is powered on, BIOS/UEFI performs POST to check the hardware. It then finds the bootable device and loads GRUB2. GRUB2 displays the boot menu and loads the Linux kernel into memory. The kernel loads initramfs, which contains the drivers needed to find and mount the real root filesystem. After the root filesystem is mounted, the kernel starts systemd (PID 1). Finally, systemd starts all enabled services, and the system displays the login prompt.
+
+
+Systemd Target (Runlevels)
+    In older Linux systems (SysVinit), the operating system used runlevels to define different operating modes.
+    | Runlevel | Purpose                |
+    | -------- | ---------------------- |
+    | 0        | Shutdown               |
+    | 1        | Single-user mode       |
+    | 3        | Multi-user (Text Mode) |
+    | 5        | Multi-user (GUI)       |
+    | 6        | Reboot                 |
+    A target is a group of services that defines how the system should operate after booting.
+
+    1. multi-user.target : This is text mode.
+        Multi-user
+        Networking enabled
+        SSH works
+        No graphical interface (GUI)
+    2. graphical.target : This starts everything in multi-user.target, plus the graphical desktop.
+    3. rescue.target :  Rescue mode is used when the system has problems but can still mount the root filesystem.
+        Single-user mode
+        Root filesystem mounted
+        Minimal services
+        Used for maintenance and repairs
+    4. emergency.target : Emergency mode is the most minimal boot mode.
+        Very few services started
+        Root filesystem may not be mounted automatically
+        Networking is usually unavailable
+        Used when serious boot problems prevent normal startup
+
+    View the Current Target
+        systemctl get-default
+    Change the Default Target
+        sudo systemctl set-default graphical.target
+    Switch Targets Without Rebooting
+        sudo systemctl isolate multi-user.target
+
+    Difference Between set-default and isolate
+        set-default
+            Changes the default target for future boots.
+            No immediate change.
+        isolate
+            Changes the target immediately, without rebooting.
+
+Rescue mode & Emergency Mode
+    Rescue mode is a special boot mode used to repair a Linux system.
+    systemctl isolate rescue.target
+        Only essential services are started.
+        The root filesystem (/) is mounted.
+        You get a root shell.
+        Networking may or may not be available, depending on the situation.
+        It is mainly used for system maintenance and repairs.
+
+    Emergency mode is even more minimal than rescue mode.
+        Root filesystem may not be mounted.
+        Networking is usually unavailable.
+        Very few services are running.
+        Used when Linux cannot boot normally.
+
+
+Resetting the Root Password
+    Power on : GRUB Menu : Edit Boot Entry : Boot into Recovery Shell : Mount Root Filesystem as Read-Write : passwd root : touch /.autorelabel : reboot
