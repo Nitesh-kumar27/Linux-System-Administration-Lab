@@ -27,6 +27,7 @@ Creating and Managing Users
 		chage -l alice
 	Expire account
 		chage -E 2026-07-31 alice
+
 Managing Groups
 
 1. Create a new group on the system.
@@ -35,6 +36,10 @@ Managing Groups
 	groupdel groupaneme
 3. Add a user to an existing group.
 	gpasswd -a username groupename
+	Create user and add it to primary group
+	useradd -g groupname username
+	Create user with primay and secondary group
+	useradd -g primarygroup -G secondary group username
 4. Remove a user from a group
 	gpasswd -d username groupname
 5. Display all groups a user belongs to.
@@ -470,3 +475,30 @@ Rescue mode & Emergency Mode
 
 Resetting the Root Password
     Power on : GRUB Menu : Edit Boot Entry : Boot into Recovery Shell : Mount Root Filesystem as Read-Write : passwd root : touch /.autorelabel : reboot
+
+
+Systemd service
+
+/etc/systemd/system/servicename.service
+Structure of a Service File
+    [Unit]	Information and dependencies
+    [Service]	What command to run
+    [Install]	What happens when you enable it
+
+Example :
+[Unit]
+Description=Cleanup /tmp directory
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rm -rf /tmp/*
+
+[Install]
+WantedBy=multi-user.target
+
+Description is simply a human-readable name. when you run staus it shows it
+Type=oneshot : runs once and exits
+Type=simple : Used for programs that keep running.
+ExecStart : This is the command to execute.
+[Install] : When someone runs systemctl enable cleanup.service, create the necessary links so this service is part of the normal multi-user boot."
+Think of multi-user.target as the standard non-graphical operating mode.
