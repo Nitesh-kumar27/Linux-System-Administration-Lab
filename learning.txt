@@ -474,7 +474,17 @@ Rescue mode & Emergency Mode
 
 
 Resetting the Root Password
-    Power on : GRUB Menu : Edit Boot Entry : Boot into Recovery Shell : Mount Root Filesystem as Read-Write : passwd root : touch /.autorelabel : reboot
+    By : rd.break :
+         on linux line add rd.break then ctrl x
+         mount -o remount,rw /sysroot
+         chroot /sysroot
+         passwd
+         touch /.autorelabel
+         exit
+    By : rw init=/bin/sh
+        passwd root
+        touch /.autorelabel
+        exec /sbin/init
 
 
 Systemd service
