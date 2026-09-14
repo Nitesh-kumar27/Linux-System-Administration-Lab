@@ -512,3 +512,110 @@ Type=simple : Used for programs that keep running.
 ExecStart : This is the command to execute.
 [Install] : When someone runs systemctl enable cleanup.service, create the necessary links so this service is part of the normal multi-user boot."
 Think of multi-user.target as the standard non-graphical operating mode.
+
+
+Some Basic Commands and their uses:
+1. ip
+    Definition: ip is used to view and configure network interfaces, IP addresses, routing tables, and network settings.
+    Examples
+        ip addr : Shows all network interfaces and their IP addresses.
+        ip route : Shows the routing table.
+        ip link : Shows network interfaces and their status.
+        ip addr show eth0 : Shows the IP configuration of eth0.
+2. ss
+    Definition : ss displays active network connections, listening ports, sockets, and connection statistics.
+    It is commonly used instead of netstat.
+    Example
+        ss -tuln
+            Options:
+                -t → TCP
+                -u → UDP
+                -l → listening
+                -n → don't resolve names
+3. netstat
+    Definition: netstat displays network connections, listening ports, routing tables, and network statistics. It is an older tool and has largely been replaced by ss.
+    Example
+        netstat -tulnp : Shows listening TCP/UDP ports and the processes using them.
+
+4.dig
+    Definition: dig (Domain Information Groper) is a DNS troubleshooting tool used to query DNS records.
+    Examples
+        dig google.com
+        Query an IPv4 (A) record: dig google.com A
+        Find mail servers: dig google.com MX
+        Query a particular DNS server: dig @8.8.8.8 google.com
+        dig is very useful for network and DNS troubleshooting.
+5. nslookup
+    Definition : nslookup is used to query DNS servers and resolve domain names to IP addresses and vice versa. Examples
+        nslookup google.com
+        Reverse lookup: nslookup 8.8.8.8
+
+    dig vs nslookup
+    Both can query DNS:
+        dig → more detailed and preferred for troubleshooting
+        nslookup → simpler and commonly available on Linux and Windows
+6. tcpdump
+    Definition:tcpdump is a command-line packet capture and network traffic analysis tool. It allows you to see packets traveling through a network interface.
+    Examples
+        Capture traffic on eth0: sudo tcpdump -i eth0
+        Capture only ICMP traffic: sudo tcpdump -i eth0 icmp
+        Capture traffic to/from a specific host: sudo tcpdump -i eth0 host 8.8.8.8
+        Capture traffic on a specific port: sudo tcpdump -i eth0 port 80
+        tcpdump is extremely useful for network troubleshooting.
+7. journalctl
+    Definition: journalctl is used to view logs collected by systemd's journal.
+    Examples
+        Show system logs: journalctl
+        Show logs for a specific service: journalctl -u ssh
+        Show the last 50 log entries: journalctl -n 50
+        Follow logs live: journalctl -f
+        Show logs since the current boot: journalctl -b
+8. systemctl
+    Definition: systemctl is used to manage and control systemd services.
+    Examples
+        Check service status: systemctl status ssh
+        Start a service: sudo systemctl start ssh
+        Stop a service: sudo systemctl stop ssh
+        Restart a service: sudo systemctl restart ssh
+        Enable a service at boot: sudo systemctl enable ssh
+        Disable a service at boot: sudo systemctl disable ssh
+9. grep
+    Definition: grep searches text and prints lines matching a specified pattern.
+    Examples
+        Search for error in a file: grep "error" logfile.txt
+        Case-insensitive search: grep -i "error" logfile.txt
+        Search recursively: grep -r "192.168.1.1" /etc/
+        Combine it with other commands: ip addr | grep inet
+10. awk
+    Definition: awk is a text-processing and data-extraction tool. It is particularly useful for working with columns/fields.
+    Suppose a file contains:
+        John  25  India
+        Mike  30  USA
+        Alex  28  UK
+    Print the first column: awk '{print $1}' file.txt
+    Output:
+        John
+        Mike
+        Alex
+    Field variables: $1 → first column, $2 → second column, $3 → third column
+    Networking example
+        ip addr | awk '/inet / {print $2}'
+        This extracts IP addresses from matching inet lines.
+
+11. sed
+    Definition: sed (Stream Editor) is used to search, replace, delete, or modify text streams/files.
+    Examples
+        Replace the first occurrence on each line: sed 's/old/new/' file.txt
+        Replace all occurrences on each line: sed 's/old/new/g' file.txt
+    Example:
+        echo "server=old" | sed 's/old/new/'
+    Output: server=new
+    Delete line 3 from the output:  sed '3d' file.txt
+
+12. find
+    Definition: find searches for files and directories based on name, type, size, permissions, timestamps, ownership, and other criteria.
+    Examples
+        Find a specific file: find /etc -name "sshd_config"
+        Find .log files: find /var/log -name "*.log"
+        Find directories: find /home -type d
+        Find files larger than 100 MB: find / -type f -size +100M
