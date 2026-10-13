@@ -619,3 +619,46 @@ Some Basic Commands and their uses:
         Find .log files: find /var/log -name "*.log"
         Find directories: find /home -type d
         Find files larger than 100 MB: find / -type f -size +100M
+
+
+
+Job scheduling with systemd timers
+    A systemd timer generally consists of two files:
+        .service — defines what to execute.
+        .timer — defines when to execute it.
+
+    Step 1 — Create the service
+        Run these commands as root, or use sudo where appropriate
+            sudo vi /etc/systemd/system/rhcsa-timer-test.service
+                [Unit]
+                Description=RHCSA Timer Test Service
+
+                [Service]
+                Type=oneshot
+                ExecStart=/usr/bin/logger -t rhcsa-timer "Timer executed successfully"
+
+    Step 2 — Create the timer
+        sudo vi /etc/systemd/system/rhcsa-timer-test.timer
+            [Unit]
+            Description=RHCSA Timer Test
+
+            [Timer]
+            OnBootSec=1min
+            OnUnitActiveSec=5min
+            Unit=rhcsa-timer-test.service
+
+            [Install]
+            WantedBy=timers.target
+
+        Understand the two important settings:
+            - OnBootSec=1min — schedule the first execution one minute after boot.
+            - OnUnitActiveSec=5min — schedule subsequent executions five minutes after the service was last activated.
+
+    Step 3 — Load and enable the timer
+        sudo systemctl daemon-reload
+        sudo systemctl enable --now rhcsa-timer-test.timer
+        Check its status : systemctl status rhcsa-timer-test.timer
+        List active timers : systemctl list-timers --all
+
+    Step 4 — Verify that the job executed
+        sudo journalctl -t rhcsa-timer
